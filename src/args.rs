@@ -25,29 +25,12 @@ pub enum UserSubcommand {
     Create { name: String, email: String },
 
     /// Update an existing user
-    Update(UpdateUser),
+    Update{id: i32, name: String, email: String },
 
     /// Delete a user
-    Delete(DeleteEntity),
+    Delete{id: i32},
 
     /// Show all users
     Show,
 }
 
-#[derive(Debug, Args)]
-pub struct UpdateUser {
-    /// The id of the user to update
-    pub id: i32,
-
-    /// The name of the user
-    pub name: String,
-
-    /// The email of the user
-    pub email: String,
-}
-
-#[derive(Debug, Args)]
-pub struct DeleteEntity {
-    /// The id of the entity to delete
-    pub id: i32,
-}

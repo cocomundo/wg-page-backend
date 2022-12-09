@@ -1,7 +1,7 @@
 use crate::db::schema::users;
 use serde::{Deserialize, Serialize};
 
-use crate::args::{DeleteEntity, UpdateUser, UserCommand, UserSubcommand};
+use crate::args::{UserCommand, UserSubcommand};
 use crate::db::establish_connection;
 use crate::db::schema::users::dsl::*;
 use diesel::prelude::*;
@@ -28,11 +28,11 @@ pub fn handle_user_command(user: UserCommand) {
         UserSubcommand::Create{name:n, email:e} => {
             create_user(&n, &e);
         }
-        UserSubcommand::Update(user) => {
-            update_user(user);
+        UserSubcommand::Update{id: i, name: n, email:e } => {
+            update_user(i, n, e);
         }
-        UserSubcommand::Delete(delete_entity) => {
-            delete_user(delete_entity);
+        UserSubcommand::Delete{id:i} => {
+            delete_user(i);
         }
         UserSubcommand::Show => {
             show_users();
@@ -53,27 +53,23 @@ fn create_user(n: &str, e: &str) {
         .expect("Error saving new user");
 }
 
-fn update_user(user: UpdateUser) {
-    println!("Updating user: {:?}", user);
-
+fn update_user(i: i32, n: String, e: String) {
     let mut connection = establish_connection();
     let db_user = User {
-        id: user.id,
-        name: user.name,
-        email: user.email,
+        id: i,
+        name: n,
+        email: e,
     };
 
-    diesel::update(users.find(user.id))
+    diesel::update(users.find(i))
         .set(&db_user)
         .execute(&mut connection)
         .expect("Error updating user");
 }
 
-fn delete_user(user: DeleteEntity) {
-    println!("Deleting user: {:?}", user);
-
+fn delete_user(i: i32) {
     let mut connection = establish_connection();
-    diesel::delete(users.find(user.id))
+    diesel::delete(users.find(i))
         .execute(&mut connection)
         .expect("Error deleting user");
 }
