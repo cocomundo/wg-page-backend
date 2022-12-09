@@ -1,0 +1,10 @@
+finish api(update_user, get_user, get_all_users)
+model umschreiben -> impl user
+remove env_vars for logging
+error_handling
+r2d2
+activate toml formatter // formatter on safe
+new types (todolist einträge, )
+authentication
+tls
+complete todolist
