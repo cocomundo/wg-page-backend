@@ -2,19 +2,6 @@
 extern crate diesel;
 extern crate dotenv;
 
-mod args;
-mod db;
-mod model;
-
-use args::EntityType;
-use args::RustflixArgs;
-use clap::Parser;
-use model::user::handle_user_command;
-
 fn main() {
-    let args = RustflixArgs::parse();
-
-    match args.entity_type {
-        EntityType::User(user) => handle_user_command(user),
-    };
+    println!("MAIN");
 }

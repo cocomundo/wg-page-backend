@@ -1,7 +1,5 @@
 use crate::db::schema::users;
 use serde::{Deserialize, Serialize};
-
-use crate::args::{UserCommand, UserSubcommand};
 use crate::db::establish_connection;
 use crate::db::schema::users::dsl::*;
 use diesel::prelude::*;
@@ -22,30 +20,9 @@ pub struct User {
     pub email: String,
 }
 
-pub fn handle_user_command(user: UserCommand) {
-    let command = user.command;
-    match command {
-        UserSubcommand::Create{name:n, email:e} => {
-            create_user(&n, &e);
-        }
-        UserSubcommand::Update{id: i, name: n, email:e } => {
-            update_user(i, n, e);
-        }
-        UserSubcommand::Delete{id:i} => {
-            delete_user(i);
-        }
-        UserSubcommand::Show => {
-            show_users();
-        }
-    }
-}
-
-fn create_user(n: &str, e: &str) {
+pub fn create_user(n: &str, e: &str) {
     let mut connection = establish_connection();
-    let new_user = NewUser {
-        name:n,
-        email:e,
-    };
+    let new_user = NewUser { name: n, email: e };
 
     diesel::insert_into(users)
         .values(&new_user)
@@ -53,7 +30,7 @@ fn create_user(n: &str, e: &str) {
         .expect("Error saving new user");
 }
 
-fn update_user(i: i32, n: String, e: String) {
+pub fn update_user(i: i32, n: String, e: String) {
     let mut connection = establish_connection();
     let db_user = User {
         id: i,
@@ -67,14 +44,14 @@ fn update_user(i: i32, n: String, e: String) {
         .expect("Error updating user");
 }
 
-fn delete_user(i: i32) {
+pub fn delete_user(i: i32) {
     let mut connection = establish_connection();
     diesel::delete(users.find(i))
         .execute(&mut connection)
         .expect("Error deleting user");
 }
 
-fn show_users() {
+pub fn show_users() {
     let mut connection = establish_connection();
     let results = users.load::<User>(&mut connection).unwrap();
 
@@ -83,9 +60,6 @@ fn show_users() {
         println!("{:?}", user);
     }
 }
-
-
-
 
 #[cfg(test)]
 mod test {
