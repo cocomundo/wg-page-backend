@@ -5,11 +5,12 @@ extern crate dotenv;
 mod args;
 mod db;
 mod model;
+mod ops;
 
 use args::EntityType;
 use args::RustflixArgs;
 use clap::Parser;
-use model::user::handle_user_command;
+use ops::user::handle_user_command;
 
 fn main() {
     let args = RustflixArgs::parse();
@@ -18,3 +19,4 @@ fn main() {
         EntityType::User(user) => handle_user_command(user),
     };
 }
+
