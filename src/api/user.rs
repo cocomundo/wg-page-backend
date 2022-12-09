@@ -1,25 +1,20 @@
-use crate::model::user::User;
+use crate::model::user::{self, NewUser};
 use actix_web::{
-    get,
-    post,
-    put,
     delete,
     error::ResponseError,
-    web::Path,
-    web::Json,
-    web::Data,
+    get,
+    http::{header::ContentType, StatusCode},
+    post, put, web,
     HttpResponse,
-    http::{header::ContentType, StatusCode}
 };
-use serde::{Serialize, Deserialize};
-use derive_more::{Display};
+use derive_more::Display;
 
 #[derive(Debug, Display)]
 pub enum UserError {
-    UserNotFound
-    UserUpdateFailure
-    UserCreationFailure
-    BadUserRequest
+    UserNotFound,
+    UserUpdateFailure,
+    UserCreationFailure,
+    BadUserRequest,
 }
 
 impl ResponseError for UserError {
@@ -34,24 +29,26 @@ impl ResponseError for UserError {
             UserError::UserNotFound => StatusCode::NOT_FOUND,
             UserError::UserUpdateFailure => StatusCode::FAILED_DEPENDENCY,
             UserError::UserCreationFailure => StatusCode::FAILED_DEPENDENCY,
-            UserError::BadUserRequest => StatusCode::BAD_REQUEST
+            UserError::BadUserRequest => StatusCode::BAD_REQUEST,
         }
     }
 }
 
 #[post("/user")]
-async fn create(user: web::Json<NewUser>) -> Result<HttpResponse, UserError> {
-    let user = User::create(user.into_inner())?;
-    Ok(HttpResponse::Ok().json(user))
-}
-#[get("/user/{id}")]
-pub async fn get_user(id: web::Path<i32>) -> Result<HttpResponse, UserError> {
-    let user = User::get(id.into_inner())?;
+async fn create_user(user: web::Json<NewUser>) -> Result<HttpResponse, UserError> {
+    let user = user.into_inner();
+    user::create_user(&user.name, &user.email);
     Ok(HttpResponse::Ok().json(user))
 }
 
-#[delete("/user/id")]
+#[get("/user/{id}")]
+pub async fn get_user(id: web::Path<i32>) -> Result<HttpResponse, UserError> {
+    user::show_users();
+    Ok(HttpResponse::Ok().json("Its fine"))
+}
+
+#[delete("/user/{id}")]
 pub async fn delete_user(id: web::Path<i32>) -> Result<HttpResponse, UserError> {
-    let deleted_user = Employees::delete(id.into_inner())?;
-    Ok(HttpResponse::Ok().json(json!({ "deleted": deleted_user })))
+    user::delete_user(id.into_inner());
+    Ok(HttpResponse::Ok().json("User deleted!"))
 }

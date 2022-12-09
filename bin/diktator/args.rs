@@ -25,10 +25,14 @@ pub enum UserSubcommand {
     Create { name: String, email: String },
 
     /// Update an existing user
-    Update{id: i32, name: String, email: String },
+    Update {
+        id: i32,
+        name: String,
+        email: String,
+    },
 
     /// Delete a user
-    Delete{id: i32},
+    Delete { id: i32 },
 
     /// Show all users
     Show,

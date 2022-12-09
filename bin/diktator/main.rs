@@ -1,9 +1,5 @@
-#[macro_use]
-extern crate diesel;
-extern crate dotenv;
-
 mod args;
-use args::{UserSubcommand,UserCommand,DiktatorArgs,EntityType};
+use args::{DiktatorArgs, EntityType, UserCommand, UserSubcommand};
 use clap::Parser;
 use wg_page_backend::model::user::*;
 

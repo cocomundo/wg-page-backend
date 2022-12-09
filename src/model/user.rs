@@ -1,15 +1,15 @@
-use crate::db::schema::users;
-use serde::{Deserialize, Serialize};
 use crate::db::establish_connection;
+use crate::db::schema::users;
 use crate::db::schema::users::dsl::*;
 use diesel::prelude::*;
+use serde::{Deserialize, Serialize};
 
 // used for insertin
-#[derive(Insertable)]
+#[derive(Serialize, Deserialize, Insertable)]
 #[table_name = "users"]
-pub struct NewUser<'a> {
-    pub name: &'a str,
-    pub email: &'a str,
+pub struct NewUser {
+    pub name: String,
+    pub email: String,
 }
 
 // used for updating and querying
@@ -22,7 +22,10 @@ pub struct User {
 
 pub fn create_user(n: &str, e: &str) {
     let mut connection = establish_connection();
-    let new_user = NewUser { name: n, email: e };
+    let new_user = NewUser {
+        name: n.to_string(),
+        email: e.to_string(),
+    };
 
     diesel::insert_into(users)
         .values(&new_user)

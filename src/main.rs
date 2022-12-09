@@ -1,7 +1,21 @@
-#[macro_use]
-extern crate diesel;
-extern crate dotenv;
+use actix_web::{middleware::Logger, App, HttpServer};
+use wg_page_backend::api::user::{create_user, delete_user, get_user};
 
-fn main() {
-    println!("MAIN");
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    std::env::set_var("RUST_LOG", "debug");
+    std::env::set_var("RUST_BACKTRACE", "1");
+    env_logger::init();
+
+    HttpServer::new(move || {
+        let logger = Logger::default();
+        App::new()
+            .wrap(logger)
+            .service(create_user)
+            .service(get_user)
+            .service(delete_user)
+    })
+    .bind(("127.0.0.1", 8000))?
+    .run()
+    .await
 }
