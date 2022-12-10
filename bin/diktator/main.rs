@@ -28,7 +28,7 @@ pub fn handle_user_command(user: UserCommand) {
             delete_user(i);
         }
         UserSubcommand::Show => {
-            show_users();
+            get_all();
         }
     }
 }

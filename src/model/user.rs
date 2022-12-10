@@ -54,7 +54,16 @@ pub fn delete_user(i: i32) {
         .expect("Error deleting user");
 }
 
-pub fn show_users() {
+pub fn get(i: i32) {
+    let mut connection = establish_connection();
+    let result = users
+        .filter(users::id.eq(i))
+        .load::<User>(&mut connection)
+        .unwrap();
+    println!("{:?}", result);
+}
+
+pub fn get_all() {
     let mut connection = establish_connection();
     let results = users.load::<User>(&mut connection).unwrap();
 

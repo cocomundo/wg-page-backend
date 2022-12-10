@@ -1,10 +1,12 @@
 finish api(update_user, get_user, get_all_users)
 model umschreiben -> impl user
 remove env_vars for logging
+make id to u32 -> cant be negative (also in schema)
 error_handling
 r2d2
 activate toml formatter // formatter on safe
 new types (todolist einträge, )
-authentication
+authentication (jWT crate)
 tls
 complete todolist
+graphQL

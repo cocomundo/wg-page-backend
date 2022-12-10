@@ -4,8 +4,7 @@ use actix_web::{
     error::ResponseError,
     get,
     http::{header::ContentType, StatusCode},
-    post, put, web,
-    HttpResponse,
+    post, put, web, HttpResponse,
 };
 use derive_more::Display;
 
@@ -43,12 +42,25 @@ async fn create_user(user: web::Json<NewUser>) -> Result<HttpResponse, UserError
 
 #[get("/user/{id}")]
 pub async fn get_user(id: web::Path<i32>) -> Result<HttpResponse, UserError> {
-    user::show_users();
+    user::get(*id);
     Ok(HttpResponse::Ok().json("Its fine"))
+}
+
+#[get("/user")]
+pub async fn get_all_user() -> Result<HttpResponse, UserError> {
+    user::get_all();
+    Ok(HttpResponse::Ok().json("All User"))
 }
 
 #[delete("/user/{id}")]
 pub async fn delete_user(id: web::Path<i32>) -> Result<HttpResponse, UserError> {
     user::delete_user(id.into_inner());
     Ok(HttpResponse::Ok().json("User deleted!"))
+}
+
+#[put("/user/{id}")]
+async fn update(id: web::Path<i32>, user: web::Json<NewUser>) -> Result<HttpResponse, UserError> {
+    let user = user.into_inner();
+    user::update_user(id.into_inner(), user.name, user.email);
+    Ok(HttpResponse::Ok().json("Updated User"))
 }
