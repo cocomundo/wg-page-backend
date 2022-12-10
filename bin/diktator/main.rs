@@ -1,7 +1,7 @@
 mod args;
 use args::{DiktatorArgs, EntityType, UserCommand, UserSubcommand};
 use clap::Parser;
-use wg_page_backend::model::user::*;
+use wg_page_backend::model::user::User;
 
 fn main() {
     let args = DiktatorArgs::parse();
@@ -15,20 +15,20 @@ pub fn handle_user_command(user: UserCommand) {
     let command = user.command;
     match command {
         UserSubcommand::Create { name: n, email: e } => {
-            create_user(&n, &e);
+            User::create(&n, &e);
         }
         UserSubcommand::Update {
             id: i,
             name: n,
             email: e,
         } => {
-            update_user(i, n, e);
+            User::update(i, n, e);
         }
         UserSubcommand::Delete { id: i } => {
-            delete_user(i);
+            User::delete(i);
         }
         UserSubcommand::Show => {
-            get_all();
+            User::get_all();
         }
     }
 }

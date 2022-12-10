@@ -1,4 +1,4 @@
-use crate::model::user::{self, NewUser};
+use crate::model::user::{NewUser, User};
 use actix_web::{
     delete,
     error::ResponseError,
@@ -36,31 +36,34 @@ impl ResponseError for UserError {
 #[post("/user")]
 async fn create_user(user: web::Json<NewUser>) -> Result<HttpResponse, UserError> {
     let user = user.into_inner();
-    user::create_user(&user.name, &user.email);
+    User::create(&user.name, &user.email);
     Ok(HttpResponse::Ok().json(user))
 }
 
 #[get("/user/{id}")]
 pub async fn get_user(id: web::Path<i32>) -> Result<HttpResponse, UserError> {
-    user::get(*id);
+    User::get(*id);
     Ok(HttpResponse::Ok().json("Its fine"))
 }
 
 #[get("/user")]
 pub async fn get_all_user() -> Result<HttpResponse, UserError> {
-    user::get_all();
+    User::get_all();
     Ok(HttpResponse::Ok().json("All User"))
 }
 
 #[delete("/user/{id}")]
 pub async fn delete_user(id: web::Path<i32>) -> Result<HttpResponse, UserError> {
-    user::delete_user(id.into_inner());
+    User::delete(id.into_inner());
     Ok(HttpResponse::Ok().json("User deleted!"))
 }
 
 #[put("/user/{id}")]
-async fn update(id: web::Path<i32>, user: web::Json<NewUser>) -> Result<HttpResponse, UserError> {
+async fn update_user(
+    id: web::Path<i32>,
+    user: web::Json<NewUser>,
+) -> Result<HttpResponse, UserError> {
     let user = user.into_inner();
-    user::update_user(id.into_inner(), user.name, user.email);
+    User::update(id.into_inner(), user.name, user.email);
     Ok(HttpResponse::Ok().json("Updated User"))
 }
