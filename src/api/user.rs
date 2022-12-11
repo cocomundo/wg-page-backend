@@ -63,6 +63,12 @@ async fn update_user(
     user: web::Json<NewUser>,
 ) -> Result<HttpResponse, UserError> {
     let user = user.into_inner();
-    User::update(id.into_inner(), user.name, user.email);
+    let id = id.into_inner();
+    let update_user = User {
+        id,
+        name: user.name,
+        email: user.email,
+    };
+    User::update(update_user);
     Ok(HttpResponse::Ok().json("Updated User"))
 }

@@ -4,15 +4,13 @@ use crate::db::schema::users::dsl::*;
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
-// used for insertin
 #[derive(Serialize, Deserialize, Insertable)]
-#[table_name = "users"]
+#[diesel(table_name = users)]
 pub struct NewUser {
     pub name: String,
     pub email: String,
 }
 
-// used for updating and querying
 #[derive(Serialize, Deserialize, Queryable, Debug, AsChangeset, Eq, PartialEq)]
 pub struct User {
     pub id: i32,
@@ -29,16 +27,11 @@ impl User {
             .expect("Error saving new user");
     }
 
-    pub fn update(i: i32, n: String, e: String) {
+    pub fn update(user: User) {
         let mut connection = establish_connection();
-        let db_user = User {
-            id: i,
-            name: n,
-            email: e,
-        };
 
-        diesel::update(users.find(i))
-            .set(&db_user)
+        diesel::update(users.find(user.id))
+            .set(&user)
             .execute(&mut connection)
             .expect("Error updating user");
     }
