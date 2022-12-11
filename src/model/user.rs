@@ -1,10 +1,11 @@
 use crate::db::establish_connection;
 use crate::db::schema::users;
 use crate::db::schema::users::dsl::*;
+use anyhow::{Context, Error};
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Insertable)]
+#[derive(Debug, Serialize, Deserialize, Insertable)]
 #[diesel(table_name = users)]
 pub struct NewUser {
     pub name: String,
@@ -19,47 +20,43 @@ pub struct User {
 }
 
 impl User {
-    pub fn create(new_user: NewUser) {
+    pub fn create(new_user: NewUser) -> Result<Self, Error> {
         let mut connection = establish_connection();
         diesel::insert_into(users)
             .values(&new_user)
-            .execute(&mut connection)
-            .expect("Error saving new user");
+            .get_result(&mut connection)
+            .with_context(|| format!("Could not create new user: {new_user:?}"))
     }
 
-    pub fn update(user: User) {
+    pub fn update(user: User) -> Result<Self, Error> {
         let mut connection = establish_connection();
 
         diesel::update(users.find(user.id))
             .set(&user)
-            .execute(&mut connection)
-            .expect("Error updating user");
+            .get_result(&mut connection)
+            .with_context(|| format!("Could not update user with id: {:?}", user.id))
     }
 
-    pub fn delete(i: i32) {
+    pub fn delete(i: i32) -> Result<usize, Error> {
         let mut connection = establish_connection();
         diesel::delete(users.find(i))
             .execute(&mut connection)
-            .expect("Error deleting user");
+            .with_context(|| format!("Could not delete user with id: {i}"))
     }
 
-    pub fn get(i: i32) {
+    pub fn get(i: i32) -> Result<Self, Error> {
         let mut connection = establish_connection();
-        let result = users
+        users
             .filter(users::id.eq(i))
-            .load::<User>(&mut connection)
-            .unwrap();
-        println!("{:?}", result);
+            .first(&mut connection)
+            .with_context(|| format!("Could not receive user with id : {i}"))
     }
 
-    pub fn get_all() {
+    pub fn get_all() -> Result<Vec<Self>, Error> {
         let mut connection = establish_connection();
-        let results = users.load::<User>(&mut connection).unwrap();
-
-        println!("Displaying {} users", results.len());
-        for user in results {
-            println!("{:?}", user);
-        }
+        users
+            .load::<User>(&mut connection)
+            .with_context(|| format!("Could not receive all users"))
     }
 }
 

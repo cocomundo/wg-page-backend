@@ -1,6 +1,6 @@
 remove env_vars for logging
-make id to u32 -> cant be negative (also in schema)
-error_handling
+make id to u32 -> cant be negative (also in schema) -> difficult because POSTGRES has no UINT
+error_handling -> consider using this error over anyhow, to specify more error details, eg. deleting user -> eror user could not be deleted
 r2d2
 activate toml formatter // formatter on safe
 new types (todolist einträge, )
