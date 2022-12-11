@@ -1,39 +1,8 @@
-use crate::model::user::{NewUser, User};
-use actix_web::{
-    delete,
-    error::ResponseError,
-    get,
-    http::{header::ContentType, StatusCode},
-    post, put, web, HttpResponse,
+use crate::{
+    api::api_errors::APIError,
+    model::user::{NewUser, User},
 };
-use derive_more::Display;
-
-#[derive(Debug, Display)]
-pub enum APIError {
-    UserNotFound,
-    UserUpdateFailure,
-    UserCreationFailure,
-    BadUserRequest,
-    InternalServerError,
-}
-
-impl ResponseError for APIError {
-    fn error_response(&self) -> HttpResponse {
-        HttpResponse::build(self.status_code())
-            .insert_header(ContentType::json())
-            .body(self.to_string())
-    }
-
-    fn status_code(&self) -> StatusCode {
-        match self {
-            APIError::UserNotFound => StatusCode::NOT_FOUND,
-            APIError::UserUpdateFailure => StatusCode::FAILED_DEPENDENCY,
-            APIError::UserCreationFailure => StatusCode::FAILED_DEPENDENCY,
-            APIError::BadUserRequest => StatusCode::BAD_REQUEST,
-            APIError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
-        }
-    }
-}
+use actix_web::{delete, get, post, put, web, HttpResponse};
 
 #[post("/user")]
 async fn create_user(user: web::Json<NewUser>) -> Result<HttpResponse, APIError> {
