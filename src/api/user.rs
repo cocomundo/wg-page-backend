@@ -35,8 +35,7 @@ impl ResponseError for UserError {
 
 #[post("/user")]
 async fn create_user(user: web::Json<NewUser>) -> Result<HttpResponse, UserError> {
-    let user = user.into_inner();
-    User::create(&user.name, &user.email);
+    let user = User::create(user.into_inner());
     Ok(HttpResponse::Ok().json(user))
 }
 

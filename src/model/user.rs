@@ -21,13 +21,8 @@ pub struct User {
 }
 
 impl User {
-    pub fn create(n: &str, e: &str) {
+    pub fn create(new_user: NewUser) {
         let mut connection = establish_connection();
-        let new_user = NewUser {
-            name: n.to_string(),
-            email: e.to_string(),
-        };
-
         diesel::insert_into(users)
             .values(&new_user)
             .execute(&mut connection)
