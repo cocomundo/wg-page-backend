@@ -4,11 +4,12 @@
 - user authentication
 
 ### Categorys
-welcoming
+- welcoming
 - shopping list
 - cleaning list
 - calender
 - gallery
+- guestbook
 
 
 ### DB content:
