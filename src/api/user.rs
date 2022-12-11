@@ -29,7 +29,7 @@ pub async fn get_user(id: web::Path<i32>) -> Result<HttpResponse, APIError> {
 }
 
 #[get("/user")]
-pub async fn get_all_user() -> Result<HttpResponse, APIError> {
+pub async fn get_all_users() -> Result<HttpResponse, APIError> {
     let all_user = User::get_all();
     match all_user {
         Ok(u) => Ok(HttpResponse::Ok().json(u)),

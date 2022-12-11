@@ -1,10 +1,11 @@
 use crate::db::establish_connection;
 use crate::db::schema::shopping_items;
 use crate::db::schema::shopping_items::dsl::*;
+use anyhow::{Context, Error};
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Insertable)]
+#[derive(Debug, Serialize, Deserialize, Insertable)]
 #[diesel(table_name = shopping_items)]
 pub struct NewShoppingItem {
     pub name: String,
@@ -19,48 +20,42 @@ pub struct ShoppingItem {
 }
 
 impl ShoppingItem {
-    pub fn create(new_item: NewShoppingItem) {
+    pub fn create(new_item: NewShoppingItem) -> Result<Self, Error> {
         let mut connection = establish_connection();
         diesel::insert_into(shopping_items)
             .values(&new_item)
-            .execute(&mut connection)
-            .expect("Error saving new user");
+            .get_result(&mut connection)
+            .with_context(|| format!("Could not create new user: {new_item:?}"))
     }
 
-    pub fn update(item: ShoppingItem) {
+    pub fn update(user: ShoppingItem) -> Result<Self, Error> {
         let mut connection = establish_connection();
 
-        diesel::update(shopping_items.find(item.id))
-            .set(&item)
-            .execute(&mut connection)
-            .expect("Error updating user");
+        diesel::update(shopping_items.find(user.id))
+            .set(&user)
+            .get_result(&mut connection)
+            .with_context(|| format!("Could not update user with id: {:?}", user.id))
     }
 
-    pub fn delete(i: i32) {
+    pub fn delete(i: i32) -> Result<usize, Error> {
         let mut connection = establish_connection();
         diesel::delete(shopping_items.find(i))
             .execute(&mut connection)
-            .expect("Error deleting user");
+            .with_context(|| format!("Could not delete user with id: {i}"))
     }
 
-    pub fn get(i: i32) {
+    pub fn get(i: i32) -> Result<Self, Error> {
         let mut connection = establish_connection();
-        let result = shopping_items
+        shopping_items
             .filter(shopping_items::id.eq(i))
-            .load::<ShoppingItem>(&mut connection)
-            .unwrap();
-        println!("{:?}", result);
+            .first(&mut connection)
+            .with_context(|| format!("Could not receive user with id : {i}"))
     }
 
-    pub fn get_all() {
+    pub fn get_all() -> Result<Vec<Self>, Error> {
         let mut connection = establish_connection();
-        let results = shopping_items
+        shopping_items
             .load::<ShoppingItem>(&mut connection)
-            .unwrap();
-
-        println!("Displaying {} users", results.len());
-        for user in results {
-            println!("{:?}", user);
-        }
+            .with_context(|| format!("Could not receive all shopping_items"))
     }
 }
