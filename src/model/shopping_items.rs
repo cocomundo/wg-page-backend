@@ -1,6 +1,7 @@
-use crate::db::establish_connection;
-use crate::db::schema::shopping_items;
-use crate::db::schema::shopping_items::dsl::*;
+use crate::db::{
+    establish_connection,
+    schema::shopping_items::{self, dsl::*},
+};
 use anyhow::{Context, Error};
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};

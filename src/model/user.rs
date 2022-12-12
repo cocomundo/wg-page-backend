@@ -1,6 +1,7 @@
-use crate::db::establish_connection;
-use crate::db::schema::users;
-use crate::db::schema::users::dsl::*;
+use crate::db::{
+    establish_connection,
+    schema::users::{self, dsl::*},
+};
 use anyhow::{Context, Error};
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -30,7 +31,6 @@ impl User {
 
     pub fn update(user: User) -> Result<Self, Error> {
         let mut connection = establish_connection();
-
         diesel::update(users.find(user.id))
             .set(&user)
             .get_result(&mut connection)
