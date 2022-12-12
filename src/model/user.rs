@@ -21,7 +21,7 @@ pub struct User {
 
 impl User {
     pub fn create(new_user: NewUser) -> Result<Self, Error> {
-        let mut connection = establish_connection();
+        let mut connection = establish_connection()?;
         diesel::insert_into(users)
             .values(&new_user)
             .get_result(&mut connection)
@@ -29,7 +29,7 @@ impl User {
     }
 
     pub fn update(user: User) -> Result<Self, Error> {
-        let mut connection = establish_connection();
+        let mut connection = establish_connection()?;
 
         diesel::update(users.find(user.id))
             .set(&user)
@@ -38,14 +38,14 @@ impl User {
     }
 
     pub fn delete(i: i32) -> Result<usize, Error> {
-        let mut connection = establish_connection();
+        let mut connection = establish_connection()?;
         diesel::delete(users.find(i))
             .execute(&mut connection)
             .with_context(|| format!("Could not delete user with id: {i}"))
     }
 
     pub fn get(i: i32) -> Result<Self, Error> {
-        let mut connection = establish_connection();
+        let mut connection = establish_connection()?;
         users
             .filter(users::id.eq(i))
             .first(&mut connection)
@@ -53,10 +53,10 @@ impl User {
     }
 
     pub fn get_all() -> Result<Vec<Self>, Error> {
-        let mut connection = establish_connection();
+        let mut connection = establish_connection()?;
         users
             .load::<User>(&mut connection)
-            .with_context(|| format!("Could not receive all users"))
+            .context("Could not receive all users")
     }
 }
 
