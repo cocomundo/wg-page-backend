@@ -20,10 +20,21 @@ create a .env file
 DATABASE_URL=postgres://user:1234@localhost/wg_db
 ```
 
+initialize the database:
+```sh
+diesel migration run
+```
+
 then start the server (The backend is the default binary)
 
 ```sh
-cargo run
+cargo run [-- --address localhost:8000]
+```
+
+optionally, set a logging level:
+
+```sh
+RUST_LOG=trace cargo run [-- --address localhost:8000]
 ```
 
 ## Deployment (TBD)

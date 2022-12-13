@@ -46,7 +46,6 @@ pub fn handle_user_command(user: UserCommand) {
             };
         }
         UserSubcommand::Show => {
-            
             let user = User::get_all();
             match user {
                 Ok(u) => {

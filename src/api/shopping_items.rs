@@ -5,7 +5,9 @@ use crate::{
 use actix_web::{delete, get, post, put, web, HttpResponse};
 
 #[post("/shopping_item")]
-async fn create_shopping_item(shopping_item: web::Json<NewShoppingItem>) -> Result<HttpResponse, APIError> {
+async fn create_shopping_item(
+    shopping_item: web::Json<NewShoppingItem>,
+) -> Result<HttpResponse, APIError> {
     let item = ShoppingItem::create(shopping_item.into_inner());
     match item {
         Ok(u) => Ok(HttpResponse::Ok().json(u)),
@@ -81,4 +83,3 @@ async fn update_shopping_item(
         }
     }
 }
-
