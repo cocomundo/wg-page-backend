@@ -22,7 +22,7 @@ pub struct ShoppingItem {
 
 impl ShoppingItem {
     pub fn create(new_item: NewShoppingItem) -> Result<Self, Error> {
-        let mut connection = establish_connection();
+        let mut connection = establish_connection()?;
         diesel::insert_into(shopping_items)
             .values(&new_item)
             .get_result(&mut connection)
@@ -30,7 +30,7 @@ impl ShoppingItem {
     }
 
     pub fn update(user: ShoppingItem) -> Result<Self, Error> {
-        let mut connection = establish_connection();
+        let mut connection = establish_connection()?;
 
         diesel::update(shopping_items.find(user.id))
             .set(&user)
@@ -39,14 +39,14 @@ impl ShoppingItem {
     }
 
     pub fn delete(i: i32) -> Result<usize, Error> {
-        let mut connection = establish_connection();
+        let mut connection = establish_connection()?;
         diesel::delete(shopping_items.find(i))
             .execute(&mut connection)
             .with_context(|| format!("Could not delete user with id: {i}"))
     }
 
     pub fn get(i: i32) -> Result<Self, Error> {
-        let mut connection = establish_connection();
+        let mut connection = establish_connection()?;
         shopping_items
             .filter(shopping_items::id.eq(i))
             .first(&mut connection)
@@ -54,9 +54,9 @@ impl ShoppingItem {
     }
 
     pub fn get_all() -> Result<Vec<Self>, Error> {
-        let mut connection = establish_connection();
+        let mut connection = establish_connection()?;
         shopping_items
             .load::<ShoppingItem>(&mut connection)
-            .with_context(|| format!("Could not receive all shopping_items"))
+            .context("Could not receive all shopping_items")
     }
 }
