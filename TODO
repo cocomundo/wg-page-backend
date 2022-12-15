@@ -1,4 +1,6 @@
-authentication (jWT crate)
+authentication (jWT crate) -> like this https://gill.net.in/posts/auth-microservice-rust-actix-web1.0-diesel-complete-tutorial/
+https://www.lpalmieri.com/posts/session-based-authentication-in-rust/
+-> after some research implement sessions via actix-web sessions (https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)
 graphQL
 new types (todolist einträge)
 
@@ -7,3 +9,7 @@ error_handling -> consider using this error over anyhow, to specify more error d
 r2d2 -> for database connection pool
 activate toml formatter // formatter on safe
 tls
+
+Userstories:
+shopping_item is deleted (bought) by user -> move it in bought_item_list and mark user who deleted item as buyer
+--> would require a price, so frontend would have to ask for price when items gets deleted maybe ?
