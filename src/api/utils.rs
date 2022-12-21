@@ -16,6 +16,6 @@ pub fn create_hash(password: &[u8]) -> Result<String> {
     Ok(password_hash.to_string())
 }
 
-// pub fn verify_password(password: &str, hash: &str) {
-//     ()
+// pub fn verify_password(password: &[u8], hash: &[str]) -> Result<()>{
+//     Argon2::default().verify_password(password, PasswordHash::from(hash))
 // }
