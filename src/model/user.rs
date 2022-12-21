@@ -1,6 +1,6 @@
 use crate::db::{
     establish_connection,
-    schema::users::{self, dsl::*},
+    schema::users,
 };
 use anyhow::{Context, Error};
 use diesel::prelude::*;
@@ -23,7 +23,7 @@ pub struct User {
 impl User {
     pub fn create(new_user: NewUser) -> Result<Self, Error> {
         let mut connection = establish_connection()?;
-        diesel::insert_into(users)
+        diesel::insert_into(users::table)
             .values(&new_user)
             .get_result(&mut connection)
             .with_context(|| format!("Could not create new user: {new_user:?}"))
@@ -31,30 +31,30 @@ impl User {
 
     pub fn update(user: User) -> Result<Self, Error> {
         let mut connection = establish_connection()?;
-        diesel::update(users.find(user.id))
+        diesel::update(users::table.find(user.id))
             .set(&user)
             .get_result(&mut connection)
             .with_context(|| format!("Could not update user with id: {:?}", user.id))
     }
 
-    pub fn delete(i: i32) -> Result<usize, Error> {
+    pub fn delete(id: i32) -> Result<usize, Error> {
         let mut connection = establish_connection()?;
-        diesel::delete(users.find(i))
+        diesel::delete(users::table.find(id))
             .execute(&mut connection)
-            .with_context(|| format!("Could not delete user with id: {i}"))
+            .with_context(|| format!("Could not delete user with id: {id}"))
     }
 
-    pub fn get(i: i32) -> Result<Self, Error> {
+    pub fn get(id: i32) -> Result<Self, Error> {
         let mut connection = establish_connection()?;
-        users
-            .filter(users::id.eq(i))
+        users::table
+            .filter(users::id.eq(id))
             .first(&mut connection)
-            .with_context(|| format!("Could not receive user with id : {i}"))
+            .with_context(|| format!("Could not receive user with id : {id}"))
     }
 
     pub fn get_all() -> Result<Vec<Self>, Error> {
         let mut connection = establish_connection()?;
-        users
+        users::table
             .load::<User>(&mut connection)
             .context("Could not receive all users")
     }
