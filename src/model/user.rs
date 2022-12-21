@@ -1,14 +1,12 @@
-use crate::db::{
-    establish_connection,
-    schema::users,
-};
+use crate::db::{establish_connection, schema::users};
 use anyhow::{Context, Error};
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
+// Struct to insert new Users into database
 #[derive(Debug, Serialize, Deserialize, Insertable)]
 #[diesel(table_name = users)]
-pub struct NewUser {
+pub struct UserInput {
     pub name: String,
     pub email: String,
     pub pwhash: String,
@@ -21,8 +19,10 @@ pub struct User {
     pub pwhash: String,
 }
 
+// Struct to obtain Users, does not contain hash
+
 impl User {
-    pub fn create(new_user: NewUser) -> Result<Self, Error> {
+    pub fn create(new_user: UserInput) -> Result<Self, Error> {
         let mut connection = establish_connection()?;
         diesel::insert_into(users::table)
             .values(&new_user)

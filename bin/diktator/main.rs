@@ -1,7 +1,7 @@
 mod args;
 use args::{DiktatorArgs, EntityType, UserCommand, UserSubcommand};
 use clap::Parser;
-use wg_page_backend::model::user::{NewUser, User};
+use wg_page_backend::model::user::{User, UserInput};
 
 fn main() {
     let args = DiktatorArgs::parse();
@@ -14,8 +14,16 @@ fn main() {
 pub fn handle_user_command(user: UserCommand) {
     let command = user.command;
     match command {
-        UserSubcommand::Create {name,email, pwhash } => {
-            let new_user = NewUser { name, email, pwhash};
+        UserSubcommand::Create {
+            name,
+            email,
+            pwhash,
+        } => {
+            let new_user = UserInput {
+                name,
+                email,
+                pwhash,
+            };
             let user = User::create(new_user);
             match user {
                 Ok(_) => println!("Created User"),

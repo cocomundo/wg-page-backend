@@ -1,11 +1,11 @@
 use crate::{
     api::api_errors::APIError,
-    model::user::{NewUser, User},
+    model::user::{User, UserInput},
 };
 use actix_web::{delete, get, post, put, web, HttpResponse};
 
 #[post("/user")]
-async fn create_user(user: web::Json<NewUser>) -> Result<HttpResponse, APIError> {
+async fn create_user(user: web::Json<UserInput>) -> Result<HttpResponse, APIError> {
     let user = User::create(user.into_inner());
     match user {
         Ok(u) => Ok(HttpResponse::Ok().json(u)),
@@ -63,9 +63,7 @@ pub async fn delete_user(email: web::Path<String>) -> Result<HttpResponse, APIEr
 }
 
 #[put("/user/{email}")]
-async fn update_user(
-    user: web::Json<NewUser>,
-) -> Result<HttpResponse, APIError> {
+async fn update_user(user: web::Json<UserInput>) -> Result<HttpResponse, APIError> {
     let user = user.into_inner();
     let update_user = User {
         name: user.name,
