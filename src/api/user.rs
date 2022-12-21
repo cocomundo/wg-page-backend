@@ -16,9 +16,10 @@ async fn create_user(user: web::Json<NewUser>) -> Result<HttpResponse, APIError>
     }
 }
 
-#[get("/user/{id}")]
-pub async fn get_user(id: web::Path<i32>) -> Result<HttpResponse, APIError> {
-    let user = User::get(*id);
+#[get("/user/{email}")]
+pub async fn get_user(email: web::Path<String>) -> Result<HttpResponse, APIError> {
+    let email = email.into_inner();
+    let user = User::get(&email);
     match user {
         Ok(u) => Ok(HttpResponse::Ok().json(u)),
         Err(e) => {
@@ -40,14 +41,14 @@ pub async fn get_all_users() -> Result<HttpResponse, APIError> {
     }
 }
 
-#[delete("/user/{id}")]
-pub async fn delete_user(id: web::Path<i32>) -> Result<HttpResponse, APIError> {
-    let id = id.into_inner();
-    let deleted_user = User::delete(id);
+#[delete("/user/{email}")]
+pub async fn delete_user(email: web::Path<String>) -> Result<HttpResponse, APIError> {
+    let email = email.into_inner();
+    let deleted_user = User::delete(&email);
     match deleted_user {
         Ok(1) => Ok(HttpResponse::Ok().json("Deleted User")),
         Ok(0) => {
-            log::warn!("There exists no User with the id: {:?}", id);
+            log::warn!("There user {:?} does not exist", email);
             Err(APIError::BadUserRequest)
         }
         Ok(n) => {
@@ -61,16 +62,15 @@ pub async fn delete_user(id: web::Path<i32>) -> Result<HttpResponse, APIError> {
     }
 }
 
-#[put("/user/{id}")]
+#[put("/user/{email}")]
 async fn update_user(
-    id: web::Path<i32>,
     user: web::Json<NewUser>,
 ) -> Result<HttpResponse, APIError> {
     let user = user.into_inner();
     let update_user = User {
-        id: id.into_inner(),
         name: user.name,
         email: user.email,
+        pwhash: user.pwhash, // TODO: make hash from pw
     };
     let user = User::update(update_user);
     match user {

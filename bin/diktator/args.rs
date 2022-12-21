@@ -22,17 +22,17 @@ pub struct UserCommand {
 #[derive(Debug, Subcommand)]
 pub enum UserSubcommand {
     /// Create a new user
-    Create { name: String, email: String },
+    Create { email: String, name: String, pwhash: String},
 
     /// Update an existing user
     Update {
-        id: i32,
-        name: String,
         email: String,
+        name: String,
+        pwhash: String,
     },
 
     /// Delete a user
-    Delete { id: i32 },
+    Delete { email: String },
 
     /// Show all users
     Show,

@@ -11,13 +11,14 @@ use serde::{Deserialize, Serialize};
 pub struct NewUser {
     pub name: String,
     pub email: String,
+    pub pwhash: String,
 }
 
-#[derive(Serialize, Deserialize, Queryable, Debug, AsChangeset, Eq, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Queryable, AsChangeset, Eq, PartialEq)]
 pub struct User {
-    pub id: i32,
-    pub name: String,
     pub email: String,
+    pub name: String,
+    pub pwhash: String,
 }
 
 impl User {
@@ -31,25 +32,25 @@ impl User {
 
     pub fn update(user: User) -> Result<Self, Error> {
         let mut connection = establish_connection()?;
-        diesel::update(users::table.find(user.id))
+        diesel::update(users::table.find(&user.email))
             .set(&user)
             .get_result(&mut connection)
-            .with_context(|| format!("Could not update user with id: {:?}", user.id))
+            .with_context(|| format!("Could not update user{:?}", user.email))
     }
 
-    pub fn delete(id: i32) -> Result<usize, Error> {
+    pub fn delete(email: &str) -> Result<usize, Error> {
         let mut connection = establish_connection()?;
-        diesel::delete(users::table.find(id))
+        diesel::delete(users::table.find(&email))
             .execute(&mut connection)
-            .with_context(|| format!("Could not delete user with id: {id}"))
+            .with_context(|| format!("Could not delete user: {email}"))
     }
 
-    pub fn get(id: i32) -> Result<Self, Error> {
+    pub fn get(email: &str) -> Result<Self, Error> {
         let mut connection = establish_connection()?;
         users::table
-            .filter(users::id.eq(id))
+            .filter(users::email.eq(email))
             .first(&mut connection)
-            .with_context(|| format!("Could not receive user with id : {id}"))
+            .with_context(|| format!("Could not receive user: {email}"))
     }
 
     pub fn get_all() -> Result<Vec<Self>, Error> {
@@ -67,9 +68,9 @@ mod test {
     #[test]
     fn serialization() {
         let user = User {
-            id: 21,
-            name: "otto".to_string(),
             email: "otto@gmail.com".to_string(),
+            name: "otto".to_string(),
+            pwhash: "1234".to_string(),
         };
         let json = dbg!(serde_json::to_string(&user).unwrap());
         let test_user: User = serde_json::from_str(&json).unwrap();

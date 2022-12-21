@@ -34,7 +34,7 @@ cargo run [-- --address localhost:8000]
 optionally, set a logging level:
 
 ```sh
-RUST_LOG=trace cargo run [-- --address localhost:8000]
+RUST_LOG=info cargo run [-- --address localhost:8000]
 ```
 
 ## Deployment (TBD)

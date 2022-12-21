@@ -14,8 +14,8 @@ fn main() {
 pub fn handle_user_command(user: UserCommand) {
     let command = user.command;
     match command {
-        UserSubcommand::Create { name: n, email: e } => {
-            let new_user = NewUser { name: n, email: e };
+        UserSubcommand::Create {name,email, pwhash } => {
+            let new_user = NewUser { name, email, pwhash};
             let user = User::create(new_user);
             match user {
                 Ok(_) => println!("Created User"),
@@ -23,14 +23,14 @@ pub fn handle_user_command(user: UserCommand) {
             };
         }
         UserSubcommand::Update {
-            id: i,
-            name: n,
-            email: e,
+            email,
+            name,
+            pwhash,
         } => {
             let update_user = User {
-                id: i,
-                name: n,
-                email: e,
+                email,
+                name,
+                pwhash,
             };
             let user = User::update(update_user);
             match user {
@@ -38,8 +38,8 @@ pub fn handle_user_command(user: UserCommand) {
                 Err(_) => println!("Could not update User"),
             };
         }
-        UserSubcommand::Delete { id: i } => {
-            let user = User::delete(i);
+        UserSubcommand::Delete { email } => {
+            let user = User::delete(&email);
             match user {
                 Ok(_) => println!("Deleted User"),
                 Err(_) => println!("Could not delete User"),
