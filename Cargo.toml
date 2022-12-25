@@ -9,6 +9,10 @@ default-run = "wg-page-backend"
 name = "diktator"
 path = "bin/diktator/main.rs"
 
+[[bin]]
+name = "diplomat"
+path = "bin/diplomat/main.rs"
+
 [dependencies]
 actix-web = "4.2.1"
 anyhow = "1.0.66"
@@ -19,5 +23,6 @@ diesel = { version = "2", features = ["postgres", "chrono"] }
 dotenv = "0.15.0"
 env_logger = "0.10.0"
 log = "0.4.17"
+reqwest = { version = "0.11.13", features = ["json", "blocking"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
