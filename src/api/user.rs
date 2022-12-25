@@ -63,15 +63,15 @@ pub async fn delete_user(email: web::Path<String>) -> Result<HttpResponse, APIEr
 }
 
 #[put("/user/{email}")]
-async fn update_user(user: web::Json<UserInput>) -> Result<HttpResponse, APIError> {
+async fn update_user(current_email: web::Path<String>, user: web::Json<UserInput>) -> Result<HttpResponse, APIError> {
     let user = user.into_inner();
     let update_user = User {
-        name: user.name,
         email: user.email,
+        name: user.name,
         pwhash: user.pwhash, // TODO: make hash from pw
     };
-    let user = User::update(update_user);
-    match user {
+    let updated_user = User::update(&current_email.into_inner(), update_user);
+    match updated_user {
         Ok(u) => Ok(HttpResponse::Ok().json(u)),
         Err(e) => {
             log::warn!("Could not update user: {e:?}");

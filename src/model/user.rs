@@ -7,8 +7,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize, Insertable)]
 #[diesel(table_name = users)]
 pub struct UserInput {
-    pub name: String,
     pub email: String,
+    pub name: String,
     pub pwhash: String,
 }
 
@@ -30,12 +30,12 @@ impl User {
             .with_context(|| format!("Could not create new user: {new_user:?}"))
     }
 
-    pub fn update(user: User) -> Result<Self, Error> {
+    pub fn update(current_email: &str, user: User) -> Result<Self, Error> {
         let mut connection = establish_connection()?;
-        diesel::update(users::table.find(&user.email))
+        diesel::update(users::table.find(&current_email))
             .set(&user)
             .get_result(&mut connection)
-            .with_context(|| format!("Could not update user{:?}", user.email))
+            .with_context(|| format!("Could not update user{:?}", current_email))
     }
 
     pub fn delete(email: &str) -> Result<usize, Error> {
