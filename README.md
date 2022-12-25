@@ -28,13 +28,19 @@ diesel migration run
 then start the server (The backend is the default binary)
 
 ```sh
-cargo run [-- --address localhost:8000]
+cargo run
 ```
 
 optionally, set a logging level:
 
 ```sh
-RUST_LOG=trace cargo run [-- --address localhost:8000]
+RUST_LOG=trace cargo run
+```
+
+To reapply the database migrations:
+
+```
+diesel migration redo -a
 ```
 
 ## Deployment (TBD)
