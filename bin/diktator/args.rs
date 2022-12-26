@@ -30,6 +30,7 @@ pub enum UserSubcommand {
 
     /// Update an existing user
     Update {
+        old_email: String,
         email: String,
         name: String,
         pwhash: String,

@@ -31,6 +31,7 @@ pub fn handle_user_command(user: UserCommand) {
             };
         }
         UserSubcommand::Update {
+            old_email,
             email,
             name,
             pwhash,
@@ -40,7 +41,7 @@ pub fn handle_user_command(user: UserCommand) {
                 name,
                 pwhash,
             };
-            let user = User::update(update_user);
+            let user = User::update(&old_email, update_user);
             match user {
                 Ok(_) => println!("Updated User"),
                 Err(_) => println!("Could not update User"),
