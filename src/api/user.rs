@@ -3,10 +3,28 @@ use crate::{
     model::user::{User, UserInput},
 };
 use actix_web::{delete, get, post, put, web, HttpResponse};
+use serde::{Serialize, Deserialize};
+
+use super::utils::create_hash;
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct UserData {
+    pub email: String,
+    pub name: String,
+    pub pw: String,
+}
 
 #[post("/user")]
-async fn create_user(user: web::Json<UserInput>) -> Result<HttpResponse, APIError> {
-    let user = User::create(user.into_inner());
+async fn create_user(user: web::Json<UserData>) -> Result<HttpResponse, APIError> {
+    let user_data = user.into_inner();
+    let pwhash = create_hash(&user_data.pw.into_bytes()).unwrap();
+    let user = UserInput{
+        email : user_data.email,
+        name : user_data.name,
+        pwhash,
+    };
+
+    let user = User::create(user);
     match user {
         Ok(u) => Ok(HttpResponse::Ok().json(u)),
         Err(e) => {
@@ -63,14 +81,15 @@ pub async fn delete_user(email: web::Path<String>) -> Result<HttpResponse, APIEr
 }
 
 #[put("/user/{email}")]
-async fn update_user(current_email: web::Path<String>, user: web::Json<UserInput>) -> Result<HttpResponse, APIError> {
-    let user = user.into_inner();
-    let update_user = User {
-        email: user.email,
-        name: user.name,
-        pwhash: user.pwhash, // TODO: make hash from pw
+async fn update_user(current_email: web::Path<String>, user_data: web::Json<UserData>) -> Result<HttpResponse, APIError> {
+    let user_data = user_data.into_inner();
+    let pwhash = create_hash(&user_data.pw.into_bytes()).unwrap();
+    let user = User{
+        email : user_data.email,
+        name : user_data.name,
+        pwhash,
     };
-    let updated_user = User::update(&current_email.into_inner(), update_user);
+    let updated_user = User::update(&current_email.into_inner(), user);
     match updated_user {
         Ok(u) => Ok(HttpResponse::Ok().json(u)),
         Err(e) => {
