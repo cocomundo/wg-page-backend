@@ -1,14 +1,15 @@
-authentication (jWT crate) -> like this https://gill.net.in/posts/auth-microservice-rust-actix-web1.0-diesel-complete-tutorial/
+-sources for session
+https://gill.net.in/posts/auth-microservice-rust-actix-web1.0-diesel-complete-tutorial/
 https://www.lpalmieri.com/posts/session-based-authentication-in-rust/
--> after some research implement sessions via actix-web sessions (https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)
-graphQL
-new types (todolist einträge)
+(https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
 
-make id to u32 -> cant be negative (also in schema) -> difficult because POSTGRES has no UINT
-error_handling -> consider using this error over anyhow, to specify more error details, eg. deleting user -> eror user could not be deleted
-r2d2 -> for database connection pool
-activate toml formatter // formatter on safe
-tls
+TODO:
+- session with session cookies
+- clean up errorhandling and add logging to API
+- graphQL
+- r2d2 -> for database connection pool
+- activate toml formatter // formatter on safe
+- tls
 
 Userstories:
 shopping_item is deleted (bought) by user -> move it in bought_item_list and mark user who deleted item as buyer
