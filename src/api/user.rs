@@ -24,60 +24,35 @@ async fn create_user(user: web::Json<UserData>) -> Result<HttpResponse, APIError
         pwhash,
     };
 
-    let user = User::create(user);
-    match user {
-        Ok(u) => Ok(HttpResponse::Ok().json(u)),
-        Err(e) => {
-            log::warn!("Could not create User: {e:?}");
-            Err(APIError::InternalServerError)
-        }
-    }
+    let user = User::create(user)?;
+    Ok(HttpResponse::Ok().json(user))
+    // match user {
+    //     Ok(u) => Ok(HttpResponse::Ok().json(u)),
+    //     Err(e) => {
+    //         log::warn!("Could not create User: {e:?}");
+    //         Err(APIError::InternalServerError)
+    //     }
+    // }
 }
 
 #[get("/user/{email}")]
 pub async fn get_user(email: web::Path<String>) -> Result<HttpResponse, APIError> {
     let email = email.into_inner();
-    let user = User::get(&email);
-    match user {
-        Ok(u) => Ok(HttpResponse::Ok().json(u)),
-        Err(e) => {
-            log::warn!("Could not create User: {e:?}");
-            Err(APIError::InternalServerError)
-        }
-    }
+    let user = User::get(&email)?;
+    Ok(HttpResponse::Ok().json(user))
 }
 
 #[get("/user")]
 pub async fn get_all_users() -> Result<HttpResponse, APIError> {
-    let all_user = User::get_all();
-    match all_user {
-        Ok(u) => Ok(HttpResponse::Ok().json(u)),
-        Err(e) => {
-            log::warn!("Could not query all Users: {e:?}");
-            Err(APIError::InternalServerError)
-        }
-    }
+    let all_users = User::get_all()?;
+    Ok(HttpResponse::Ok().json(all_users))
 }
 
 #[delete("/user/{email}")]
 pub async fn delete_user(email: web::Path<String>) -> Result<HttpResponse, APIError> {
     let email = email.into_inner();
-    let deleted_user = User::delete(&email);
-    match deleted_user {
-        Ok(1) => Ok(HttpResponse::Ok().json("Deleted User")),
-        Ok(0) => {
-            log::warn!("There user {:?} does not exist", email);
-            Err(APIError::BadUserRequest)
-        }
-        Ok(n) => {
-            log::warn!("Deleted {n:?} Users !");
-            Ok(HttpResponse::Ok().json(n))
-        }
-        Err(e) => {
-            log::warn!("Could not delete user: {e:?}");
-            Err(APIError::InternalServerError)
-        }
-    }
+    let deleted_user = User::delete(&email)?;
+    Ok(HttpResponse::Ok().json(deleted_user))
 }
 
 #[put("/user/{email}")]
@@ -89,12 +64,6 @@ async fn update_user(current_email: web::Path<String>, user_data: web::Json<User
         name : user_data.name,
         pwhash,
     };
-    let updated_user = User::update(&current_email.into_inner(), user);
-    match updated_user {
-        Ok(u) => Ok(HttpResponse::Ok().json(u)),
-        Err(e) => {
-            log::warn!("Could not update user: {e:?}");
-            Err(APIError::InternalServerError)
-        }
-    }
+    let updated_user = User::update(&current_email.into_inner(), user)?;
+    Ok(HttpResponse::Ok().json(updated_user))
 }

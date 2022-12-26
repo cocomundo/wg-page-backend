@@ -1,34 +1,21 @@
 use actix_web::{
-    error::ResponseError,
-    http::{header::ContentType, StatusCode},
-    HttpResponse,
+    http::{StatusCode}, ResponseError,
 };
 
-use derive_more::Display;
 
-#[derive(Debug, Display)]
+#[derive(thiserror::Error, Debug)]
 pub enum APIError {
-    UserNotFound,
-    UserUpdateFailure,
-    UserCreationFailure,
-    BadUserRequest,
-    InternalServerError,
+    #[error("{0}")]
+    ValidationError(String),
+    #[error(transparent)]
+    UnexpectedError(#[from] anyhow::Error),
 }
 
 impl ResponseError for APIError {
-    fn error_response(&self) -> HttpResponse {
-        HttpResponse::build(self.status_code())
-            .insert_header(ContentType::json())
-            .body(self.to_string())
-    }
-
     fn status_code(&self) -> StatusCode {
         match self {
-            APIError::UserNotFound => StatusCode::NOT_FOUND,
-            APIError::UserUpdateFailure => StatusCode::FAILED_DEPENDENCY,
-            APIError::UserCreationFailure => StatusCode::FAILED_DEPENDENCY,
-            APIError::BadUserRequest => StatusCode::BAD_REQUEST,
-            APIError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
+            APIError::UnexpectedError(_) => StatusCode::BAD_REQUEST,
+            APIError::ValidationError(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }
