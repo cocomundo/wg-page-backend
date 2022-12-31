@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 // Struct to insert new Users into database
 #[derive(Debug, Serialize, Deserialize, Insertable)]
 #[diesel(table_name = users)]
-pub struct UserInput {
+pub struct UserData {
     pub email: String,
     pub name: String,
     pub pwhash: String,
@@ -22,7 +22,7 @@ pub struct User {
 // Struct to obtain Users, does not contain hash
 
 impl User {
-    pub fn create(new_user: UserInput) -> Result<Self, Error> {
+    pub fn create(new_user: UserData) -> Result<Self, Error> {
         let mut connection = establish_connection()?;
         diesel::insert_into(users::table)
             .values(&new_user)

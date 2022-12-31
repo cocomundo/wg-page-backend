@@ -1,7 +1,7 @@
 mod args;
 use args::{DiktatorArgs, EntityType, UserCommand, UserSubcommand};
 use clap::Parser;
-use wg_page_backend::model::user::{User, UserInput};
+use wg_page_backend::model::user::{User, UserData};
 
 fn main() {
     let args = DiktatorArgs::parse();
@@ -19,7 +19,7 @@ pub fn handle_user_command(user: UserCommand) {
             email,
             pwhash,
         } => {
-            let new_user = UserInput {
+            let new_user = UserData {
                 name,
                 email,
                 pwhash,
