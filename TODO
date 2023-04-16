@@ -11,6 +11,10 @@ TODO:
 - activate toml formatter // formatter on safe
 - tls
 
+- have a look at main.rs "cargo expand" on main function
+- cargo expand --test health_check
+
 Userstories:
 shopping_item is deleted (bought) by user -> move it in bought_item_list and mark user who deleted item as buyer
 --> would require a price, so frontend would have to ask for price when items gets deleted maybe ?
+

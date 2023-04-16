@@ -6,11 +6,11 @@ To run the backend for development, start a postgres Database
 
 ```sh
 docker pull postgres
-docker run --name postgresDB
-    -p 5432:5432
-    -e POSTGRES_USER=user
-    -e POSTGRES_PASSWORD=1234
-    -e POSTGRES_DB=wg_db
+docker run --name postgresDB \
+    -p 5432:5432 \
+    -e POSTGRES_USER=user \
+    -e POSTGRES_PASSWORD=1234 \
+    -e POSTGRES_DB=wg_db \
     -d postgres
 ```
 
@@ -20,8 +20,9 @@ create a .env file
 DATABASE_URL=postgres://user:1234@localhost/wg_db
 ```
 
-initialize the database:
+install diesel_cli and initialize the database:
 ```sh
+cargo install diesel_cli --no-default-features --features postgres
 diesel migration run
 ```
 
