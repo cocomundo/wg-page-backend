@@ -13,7 +13,7 @@ pub struct NewUser {
     pub email: String,
 }
 
-#[derive(Serialize, Deserialize, Queryable, Debug, AsChangeset, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq, Serialize, Deserialize, Queryable, AsChangeset)]
 pub struct User {
     pub id: i32,
     pub name: String,

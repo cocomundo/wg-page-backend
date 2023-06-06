@@ -1,13 +1,14 @@
-mod args;
-use args::{DiktatorArgs, EntityType, UserCommand, UserSubcommand};
 use clap::Parser;
-use wg_page_backend::model::user::{NewUser, User};
+use wg_page_backend::{
+    args::{Arguments, Entity, UserCommand, UserSubcommand},
+    model::user::{NewUser, User},
+};
 
 fn main() {
-    let args = DiktatorArgs::parse();
+    let args = Arguments::parse();
 
-    match args.entity_type {
-        EntityType::User(user) => handle_user_command(user),
+    match args.entity {
+        Entity::User(user) => handle_user_command(user),
     };
 }
 
@@ -22,20 +23,15 @@ pub fn handle_user_command(user: UserCommand) {
                 Err(_) => println!("Could not create User"),
             };
         }
-        UserSubcommand::Update {
-            id: i,
-            name: n,
-            email: e,
-        } => {
-            let update_user = User {
-                id: i,
-                name: n,
-                email: e,
-            };
+        UserSubcommand::Update { id, name, email } => {
+            let old_user: User = User::get(id).expect(&format!("No user with id {id}"));
+            let name = name.unwrap_or(old_user.name);
+            let email = email.unwrap_or(old_user.email);
+            let update_user = User { id, name, email };
             let user = User::update(update_user);
             match user {
-                Ok(_) => println!("Updated User"),
-                Err(_) => println!("Could not update User"),
+                Ok(u) => println!("Updated user: {u:#?}"),
+                Err(e) => println!("Could not update user, error {e:#?}"),
             };
         }
         UserSubcommand::Delete { id: i } => {
@@ -43,6 +39,13 @@ pub fn handle_user_command(user: UserCommand) {
             match user {
                 Ok(_) => println!("Deleted User"),
                 Err(_) => println!("Could not delete User"),
+            };
+        }
+        UserSubcommand::Get { id } => {
+            let user = User::get(id);
+            match user {
+                Ok(u) => println!("Got user: {u:#?}"),
+                Err(e) => println!("Could not get user, {e:#?}"),
             };
         }
         UserSubcommand::Show => {
