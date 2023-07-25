@@ -3,7 +3,7 @@ use crate::{
     model::user::{User, UserData},
 };
 use actix_web::{delete, get, post, put, web, HttpResponse};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use super::utils::create_hash;
 
@@ -21,11 +21,11 @@ pub struct UserOutput {
 }
 
 impl UserOutput {
-    fn from_user (user: &User) -> Self {
+    fn from_user(user: &User) -> Self {
         UserOutput {
             email: user.email.clone(),
             name: user.name.clone(),
-        }        
+        }
     }
 }
 
@@ -33,9 +33,9 @@ impl UserOutput {
 async fn create_user(user_input: web::Json<UserInput>) -> Result<HttpResponse, APIError> {
     let user_input = user_input.into_inner();
     let pwhash = create_hash(&user_input.password.into_bytes()).unwrap();
-    let user = UserData{
-        email : user_input.email,
-        name : user_input.name,
+    let user = UserData {
+        email: user_input.email,
+        name: user_input.name,
         pwhash,
     };
 
@@ -68,14 +68,18 @@ pub async fn delete_user(email: web::Path<String>) -> Result<HttpResponse, APIEr
 }
 
 #[put("/user/{email}")]
-async fn update_user(current_email: web::Path<String>, user_input: web::Json<UserInput>) -> Result<HttpResponse, APIError> {
+async fn update_user(
+    current_email: web::Path<String>,
+    user_input: web::Json<UserInput>,
+) -> Result<HttpResponse, APIError> {
     let user_input = user_input.into_inner();
     let pwhash = create_hash(&user_input.password.into_bytes()).unwrap();
-    let user = User{
-        email : user_input.email,
-        name : user_input.name,
+    let user = User {
+        email: user_input.email,
+        name: user_input.name,
         pwhash,
     };
-    let updated_user_data = UserOutput::from_user(&User::update(&current_email.into_inner(), user)?);
+    let updated_user_data =
+        UserOutput::from_user(&User::update(&current_email.into_inner(), user)?);
     Ok(HttpResponse::Ok().json(updated_user_data))
 }

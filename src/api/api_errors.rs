@@ -1,7 +1,4 @@
-use actix_web::{
-    http::{StatusCode}, ResponseError,
-};
-
+use actix_web::{http::StatusCode, ResponseError};
 
 #[derive(thiserror::Error, Debug)]
 pub enum APIError {
