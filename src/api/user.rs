@@ -38,7 +38,6 @@ async fn create_user(user_input: web::Json<UserInput>) -> Result<HttpResponse, A
         name: user_input.name,
         pwhash,
     };
-
     let user_output = UserOutput::from_user(&User::create(user)?);
     Ok(HttpResponse::Ok().json(user_output))
 }

@@ -1,12 +1,13 @@
 pub mod api;
 mod db;
 pub mod model;
+pub mod telemetry;
 
 use actix_web::dev::Server;
 use actix_web::{get, middleware::Logger, App, HttpResponse, HttpServer};
 use api::user::{create_user, delete_user, get_all_users, get_user, update_user};
-use env_logger::Env;
 use std::net::TcpListener;
+use telemetry::{get_subscriber, init_subscriber};
 
 #[get("/health_check")]
 pub async fn health_check() -> HttpResponse {
@@ -14,8 +15,8 @@ pub async fn health_check() -> HttpResponse {
 }
 
 pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
-    // set info as default, if RUST_LOG is not set
-    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+    let subscriber = get_subscriber("zero2prod".into(), "info".into());
+    init_subscriber(subscriber);
 
     let server = HttpServer::new(move || {
         App::new()
