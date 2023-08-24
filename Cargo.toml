@@ -38,3 +38,4 @@ tracing-log = "0.1"
 
 [dev-dependencies]
 reqwest = "0.11"
+once_cell = "1"

@@ -7,7 +7,6 @@ use actix_web::dev::Server;
 use actix_web::{get, middleware::Logger, App, HttpResponse, HttpServer};
 use api::user::{create_user, delete_user, get_all_users, get_user, update_user};
 use std::net::TcpListener;
-use telemetry::{get_subscriber, init_subscriber};
 
 #[get("/health_check")]
 pub async fn health_check() -> HttpResponse {
@@ -15,9 +14,6 @@ pub async fn health_check() -> HttpResponse {
 }
 
 pub fn run(listener: TcpListener) -> Result<Server, std::io::Error> {
-    let subscriber = get_subscriber("zero2prod".into(), "info".into());
-    init_subscriber(subscriber);
-
     let server = HttpServer::new(move || {
         App::new()
             .wrap(Logger::default())

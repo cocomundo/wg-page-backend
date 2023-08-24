@@ -29,13 +29,14 @@ diesel migration run
 then start the server (The backend is the default binary)
 
 ```sh
-cargo run [-- --address localhost:8000]
+cargo run  
 ```
 
-optionally, set a logging level:
-
+for debugging purpose you can install bunyan to get beautified output
 ```sh
-RUST_LOG=info cargo run [-- --address localhost:8000]
+cargo install bunyan  
+
+cargo run | bunyan  
 ```
 
 ## Deployment (TBD)

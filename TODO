@@ -1,12 +1,11 @@
--sources for session
+- sources for session
 https://gill.net.in/posts/auth-microservice-rust-actix-web1.0-diesel-complete-tutorial/
 https://www.lpalmieri.com/posts/session-based-authentication-in-rust/
-(https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
 
 TODO:
+- cleanup telemetry and check if no userinformation is leaking
 - session with session cookies
 - clean up errorhandling and add logging to API
-- graphQL
 - r2d2 -> for database connection pool
 - activate toml formatter // formatter on safe
 - tls
